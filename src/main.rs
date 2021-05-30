@@ -10,17 +10,27 @@ fn main() {
     let mut window = Window::new("Kiss3d: cube");
     window.set_light(Light::StickToCamera);
 
-    let mut c = add_red_cube(
-        &mut window,
-        Translation3::new(0.0, 0.0, 0.0)
-    );
-
-    let rot = UnitQuaternion::from_axis_angle(
-        &Vector3::y_axis(),
-        0.014
-    );
+    let capacity = 10;
+    for i in 0..capacity {
+        for j in 0..capacity {
+            for k in 0..capacity {
+                add_red_cube(
+                    &mut window,
+                    Translation3::new(
+                        ((k - (capacity / 2)) * 2) as f32,
+                        ((j - (capacity / 2)) * 2) as f32,
+                        ((i - (capacity / 2)) * 2) as f32,
+                    ),
+                );
+            }
+        }
+    }
+    // let rot = UnitQuaternion::from_axis_angle(
+    //     &Vector3::y_axis(),
+    //     0.014
+    // );
     while window.render() {
-        c.prepend_to_local_rotation(&rot);
+        // c.prepend_to_local_rotation(&rot);
     }
 }
 
