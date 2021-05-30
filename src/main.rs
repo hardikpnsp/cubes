@@ -10,24 +10,58 @@ fn main() {
     let mut window = Window::new("Kiss3d: cube");
     window.set_light(Light::StickToCamera);
 
-    let mut cube_vec = add_multiple_cubes(&mut window, 10);
+    let capacity = 10;
+    let rotation_angle_speed = 0.025;
 
-    let rot = UnitQuaternion::from_axis_angle(&Vector3::y_axis(), 0.014);
+    let mut cube_vec_3d = add_cube_3d_grid(&mut window, capacity);
+
+    let rot = UnitQuaternion::from_axis_angle(&Vector3::y_axis(), rotation_angle_speed);
 
     while window.render() {
-        for cube in &mut cube_vec {
-            cube.prepend_to_local_rotation(&rot);
+        for cube_vec_2d in &mut cube_vec_3d {
+            for cube_vec in &mut *cube_vec_2d {
+                for cube in &mut *cube_vec {
+                    cube.prepend_to_local_rotation(&rot);
+                }
+            }
         }
     }
 }
 
-fn add_multiple_cubes(mut window: &mut Window, capacity: i32) -> Vec<SceneNode> {
+fn add_cube_3d_grid(mut window: &mut Window, capacity: i32) -> Vec<Vec<Vec<SceneNode>>> {
+    let mut cube_vec_3d: Vec<Vec<Vec<SceneNode>>> = Vec::new();
+
+    for z in 0..capacity {
+        cube_vec_3d.push(add_cube_2d_grid(
+            &mut window,
+            capacity,
+            center_coordinate(capacity, z) as f32,
+        ));
+    }
+    cube_vec_3d
+}
+
+fn add_cube_2d_grid(mut window: &mut Window, capacity: i32, z: f32) -> Vec<Vec<SceneNode>> {
+    let mut cube_vec_2d: Vec<Vec<SceneNode>> = Vec::new();
+
+    for i in 0..capacity {
+        cube_vec_2d.push(add_cube_line(
+            &mut window,
+            capacity,
+            center_coordinate(capacity, i) as f32,
+            z,
+        ));
+    }
+    cube_vec_2d
+}
+
+fn add_cube_line(mut window: &mut Window, capacity: i32, y: f32, z: f32) -> Vec<SceneNode> {
     let mut cube_vec: Vec<SceneNode> = Vec::new();
 
     for i in 0..capacity {
         cube_vec.push(add_red_cube(
             &mut window,
-            Translation3::new(((i - (capacity / 2)) * 2) as f32, 0.0, 0.0),
+            Translation3::new(center_coordinate(capacity, i) as f32, y, z),
         ));
     }
     cube_vec
@@ -41,4 +75,8 @@ fn add_red_cube(window: &mut Window, cube_translation: Translation3<f32>) -> Sce
         translation: cube_translation,
     });
     c
+}
+
+fn center_coordinate(capacity: i32, coordinate: i32) -> i32 {
+    2 * (coordinate - (capacity / 2))
 }
