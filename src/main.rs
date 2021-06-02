@@ -1,7 +1,6 @@
 mod cube_grid;
 
 extern crate kiss3d;
-extern crate nalgebra as na;
 
 use kiss3d::light::Light;
 use kiss3d::nalgebra::{UnitQuaternion, Vector3};

@@ -1,4 +1,6 @@
-use kiss3d::nalgebra::{Isometry3, Translation3, UnitQuaternion, Vector3};
+extern crate nalgebra as na;
+
+use na::{Isometry3, Translation3, UnitQuaternion, Vector3};
 use kiss3d::scene::SceneNode;
 use kiss3d::window::Window;
 
